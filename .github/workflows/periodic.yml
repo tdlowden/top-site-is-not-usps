@@ -1,0 +1,16 @@
+name: hourly check
+
+on:
+  schedule:
+    - cron: '3 * * * *'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    container: alpine
+  steps:
+    - run: |
+      apk add --no-cache jq
+      wget -qO - https://analytics.usa.gov/data/live/top-pages-realtime.json \
+      | zcat \
+      | jq -e '.data[0].page | test("usps.com"; "i")'
