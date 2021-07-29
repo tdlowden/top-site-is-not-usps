@@ -38,20 +38,34 @@
           Is USPS the #1 website in the federal government?
         </div>
         <div id="answer"></div>
+        <div id="info"></div>
       </div>
     </div>
     <script type="text/javascript">
       (async () => {
         const {
-          data: [{ page }],
+          data: [{ active_visitors: visitors, page, page_title: title }],
         } = await fetch(
           "https://analytics.usa.gov/data/live/top-pages-realtime.json"
         ).then((r) => r.json());
         const isUSPSNumberOne = /usps\.(com|gov)/i.test(page);
+        const fmt = new Intl.NumberFormat();
 
-        document.querySelector("#answer").innerText = isUSPSNumberOne
-          ? "🎉 YES 🎉"
-          : "😢 no 😢";
+        if (isUSPSNumberOne) {
+          document.querySelector("#answer").innerText = "🎉 YES 🎉";
+          document.querySelector(
+            "#info"
+          ).innerHTML = `The top USPS site is <a href="${page}">${title}</a> with ${fmt.format(
+            visitors
+          )} visitors`;
+        } else {
+          document.querySelector("#answer").innerText = "Nope";
+          document.querySelector(
+            "#info"
+          ).innerHTML = `It's currently <a href="${page}">${title}</a> with ${fmt.format(
+            visitors
+          )} visitors`;
+        }
       })();
     </script>
   </body>
